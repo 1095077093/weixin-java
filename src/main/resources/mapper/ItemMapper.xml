@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sc.mapper.ItemMapper">
+
+    <select id="getItemListByTypeId" resultMap="itemMap">
+        select * from item i,user u,item_type it where i.user_id=u.user_id and i.type_id=it.type_id and i.type_id=#{typeId}
+    </select>
+
+    <resultMap id="itemMap" type="item">
+        <id property="itemId" column="item_id"></id>
+        <result property="itemTitle" column="item_title"></result>
+        <result property="category" column="category"></result>
+        <result property="region" column="region"></result>
+        <result property="address" column="address"></result>
+        <result property="lostTime" column="lost_time"></result>
+        <result property="imgs" column="imgs"  typeHandler="com.sc.handler.ListTypeHandler"></result>
+        <result property="lostDetail" column="lost_detail"></result>
+        <association property="user"  javaType="user">
+            <id property="userId" column="user_id"></id>
+            <result property="userName" column="user_name"></result>
+            <result property="openId" column="open_id"></result>
+        </association>
+        <association property="itemType" javaType="itemType">
+            <id property="typeId" column="type_id"></id>
+            <result property="typeName" column="type_name"></result>
+        </association>
+    </resultMap>
+
+    <select id="getItemByItemId" resultMap="itemMap">
+        select * from item i,user u,item_type it where i.user_id=u.user_id and i.type_id=it.type_id and item_id=#{itemId}
+    </select>
+
+    <insert id="addItem" parameterType="item">
+        INSERT INTO item
+        (
+            item_title,
+            user_id,
+            category,
+            type_id,
+            region,
+            address,
+            lost_time,
+            imgs,
+            lost_detail
+            ) VALUES (
+            #{itemTitle},
+            #{user.userId},
+            #{category},
+            #{itemType.typeId},
+            #{region},
+            #{address},
+            #{lostTime},
+            #{imgs,typeHandler=com.sc.handler.ListTypeHandler},
+            #{lostDetail})
+    </insert>
+
+    <update id="updateItem" parameterType="item">
+        update item set
+        item_title=#{itemTitle},
+        user_id=#{user.userId},
+        category=#{category},
+        type_id=#{itemType.typeId},
+        region=#{region},
+        address=#{address},
+        lost_time=#{lostTime},
+        imgs= #{imgs,typeHandler=com.sc.handler.ListTypeHandler},
+        lost_detail=#{lostDetail}
+        where
+        item_id=#{itemId}
+    </update>
+
+    <delete id="deleteItem" >
+        delete from item where item_id=#{itemId}
+    </delete>
+
+    <select id="getItemListByUserId" resultMap="itemMap">
+        select * from item i,user u,item_type it where i.user_id=u.user_id and i.type_id=it.type_id and i.user_id=#{userId}
+    </select>
+
+
+
+</mapper>
